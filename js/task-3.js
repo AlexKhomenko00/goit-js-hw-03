@@ -4,20 +4,20 @@ const buttonRef = document.querySelector('.run-button-3');
 
 buttonRef.addEventListener('click', function() {
   const findBestEmployee = function(employees) {
-    const entries = Object.entries(employees);
-    let bestWorker = entries[0];
-    /* Можно было разделить на две переменные, 
-     и потом к ним присваивать,
-     но так мне показалось читабельнее */
+    const keys = Object.keys(employees);
+    const values = Object.values(employees);
+    let bestWorker = 0; // Присваиваем индекс первого работника, как предположение
+    let bestValue = values[0];
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const entry of entries) {
-      if (bestWorker[1] < entry[1]) {
+    for (const value of values) {
+      if (bestValue < value) {
         // Сравниваем кол-во задач, которое всегда у нас под индексом [1].
-        bestWorker = entry;
+        bestWorker = values.indexOf(value);
+        bestValue = value;
       }
     }
-    return `Самый продуктивный работник: ${bestWorker[0]}`;
+    return `Самый продуктивный работник: ${keys[bestWorker]}`; // Ищем по индексу в масеве лучшего рабочего
   };
 
   // Проверяем работу скрипта
@@ -37,7 +37,6 @@ buttonRef.addEventListener('click', function() {
       ajax: 4,
     }),
   ); // mango
-
   console.log(
     findBestEmployee({
       lux: 147,

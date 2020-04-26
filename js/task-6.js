@@ -15,13 +15,9 @@ buttonRef.addEventListener('click', function() {
   const calculateTotalPrice = function(allProdcuts, productName) {
     let totalPrice = 0;
     for (const product of allProdcuts) {
-      // Перебираем массив, который содержит объекты
-      const values = Object.values(product);
-      // Получаем массив, содержащий значения свойств каждого объекта в массиве
-      for (const value of values)
-        if (Array(value).includes(productName)) {
-          totalPrice = product.price * product.quantity;
-        }
+      if (product.name === productName) {
+        totalPrice = product.price * product.quantity;
+      }
     }
     return totalPrice > 0
       ? `Стоимость заказа: ${totalPrice}`

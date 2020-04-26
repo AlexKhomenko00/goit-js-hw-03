@@ -29,26 +29,28 @@ buttonRef.addEventListener('click', function() {
      * Метод создает и возвращает объект транзакции.
      */
     createTransaction(amount, type) {
-      /* const id = this.getRandomID(); 
-    Немного поигрался с генератором ID, выключен для удобства проверки.
+      /*  const id = this.getRandomID();
+      Немного поигрался с генератором ID, выключен для удобства проверки.
     Включать на свой страх и риск :)
     */
       const id = `${this.transactions.length * 10}d`;
-      this.transactions.push({
-        amount,
-        type,
-        id,
-      });
       console.log('Транзакция успешна!');
       console.log('ID этой транзакции:', id);
       console.log('==========================================================');
+      return {
+        amount,
+        type,
+        id,
+      };
     },
 
     /*
      * Метод отвечающий за добавление суммы к балансу.
      */
     deposit(amount) {
-      this.createTransaction(amount, Transaction.DEPOSIT);
+      this.transactions.push(
+        this.createTransaction(amount, Transaction.DEPOSIT),
+      );
       this.balance += amount;
     },
 
@@ -63,7 +65,9 @@ buttonRef.addEventListener('click', function() {
         );
         return;
       }
-      this.createTransaction(amount, Transaction.WITHDRAW);
+      this.transactions.push(
+        this.createTransaction(amount, Transaction.WITHDRAW),
+      );
       this.balance -= amount;
     },
 
@@ -71,8 +75,8 @@ buttonRef.addEventListener('click', function() {
      * Метод возвращает текущий баланс
      */
     getBalance() {
-      console.log('Ваш баланс:', this.balance, '(долларов конечно же 💸)');
-      console.log('==========================================================');
+      return `Ваш баланс: ${this.balance} (долларов конечно же 💸)
+==========================================================`;
     },
 
     /*
@@ -81,21 +85,12 @@ buttonRef.addEventListener('click', function() {
     getTransactionDetails(id) {
       for (const transaction of this.transactions) {
         // Перебираем массив, который содержит объекты
-        const values = Object.values(transaction);
-        // Получаем массив, содержащий значения свойств каждого объекта в массиве
-        for (const value of values) {
-          if (Array(value).includes(id)) {
-            const transactionToFind = transaction;
-            console.log(transactionToFind);
-            console.log(
-              '==========================================================',
-            );
-            return;
-          }
+        if (transaction.id === id) {
+          return transaction;
         }
       }
-      console.log('Такого ID не найдено!');
-      console.log('==========================================================');
+      return `Не найдено транзакции с таким ID
+==========================================================`;
     },
 
     /* Метод возвращает количество средств
@@ -106,43 +101,26 @@ buttonRef.addEventListener('click', function() {
       let totalTransactionNubmer = 0;
       for (const transaction of this.transactions) {
         // Перебираем массив, который содержит объекты
-        const values = Object.values(transaction);
-        // Получаем массив, содержащий значения свойств каждого объекта в массиве
-        for (const value of values) {
-          if (Array(value).includes(type)) {
-            totalTransactionNubmer += 1;
-            totalTransactionSum += transaction.amount;
-            // Добавляем к общей сумме транзакций сумму текущей
-          }
+        if (transaction.type === type) {
+          totalTransactionNubmer += 1;
+          totalTransactionSum += transaction.amount;
+          // Добавляем к общей сумме транзакций сумму текущей
         }
       }
       if (totalTransactionSum === 0) {
-        console.log('Такой транзакции не найдено!');
-        console.log(
-          '==========================================================',
-        );
-        return;
+        return 'Такой транзакции не найдено!';
       }
       // Исключаем отсуствие какой-либо транзакции(может потом добавим переводы между счетами :) )
-
-      console.log(
-        `Было выполнено ${totalTransactionNubmer} транзакций "${type}" на общую сумму ${totalTransactionSum}`,
-      );
-      console.log('==========================================================');
+      return `Было выполнено ${totalTransactionNubmer} транзакций "${type}" на общую сумму ${totalTransactionSum}
+==========================================================`;
     },
 
     getRandomID() {
       let id = Math.floor(Math.random() * (1679615 - 0 + 1)) + 0;
       for (const transaction of this.transactions) {
-        // Перебираем массив, который содержит объекты
-        const values = Object.values(transaction);
-        // Получаем массив, содержащий значения свойств каждого объекта в массиве
-        for (const value of values) {
-          do {
-            id = Math.floor(Math.random() * (1679615 - 0 + 1)) + 0;
-            return id.toString(36);
-          } while (Array(value).includes(id) && id === 0);
-        }
+        do {
+          id = Math.floor(Math.random() * (1679615 - 0 + 1)) + 0;
+        } while (transaction.id === id && id === 0);
       }
       return id.toString(36);
     },
@@ -151,8 +129,13 @@ buttonRef.addEventListener('click', function() {
   // Проверяем работу скрипта
   account.deposit(20);
   account.withdraw(10);
-  account.getBalance();
-  account.getTransactionTotal('deposit');
-  account.getTransactionTotal('withdraw');
+  account.withdraw(10);
+  account.withdraw(10);
+  account.deposit(30);
+  console.log(account.getBalance());
+  console.log(account.getTransactionTotal('deposit'));
+  console.log(account.getTransactionTotal('withdraw'));
   console.table(account.transactions);
+  console.log(account.getTransactionDetails('0d'));
+  console.log(account.getTransactionDetails('0123d'));
 });

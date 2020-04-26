@@ -11,16 +11,25 @@ buttonRef.addEventListener('click', function() {
   ];
 
   const getAllPropValues = function(arr, prop) {
-    const arrays = arr; // Можно было без создания переменной пустить arr в цикл, но так чуть понятнее.
+    const objects = arr; // Можно было без создания переменной пустить arr в цикл, но так чуть понятнее.
     const searchedArray = [];
     // Перебираем массив с объектами
+
     // eslint-disable-next-line no-restricted-syntax
-    for (const array of arrays) {
-      if (array[prop] !== undefined) {
-        /* Не совсем универсальное решение,
-       но не знаю как еще добиться [] при отсуствии свойства в объекте */
-        searchedArray.push(array[prop]);
+    for (const item of objects) {
+      if (prop in item) {
+        /* Сделал по вашему методу, спасибо за совет.
+        Оно  как раз более универсальное, 
+        так как вдруг кому-то специально нужно будет 
+        undefined в свойстве объекта */
+        searchedArray.push(item[prop]);
       }
+
+      // if (item[prop] !== undefined) {
+      //   /* Не совсем универсальное решение,
+      //  но не знаю как еще добиться [] при отсуствии свойства в объекте */
+      //   searchedArray.push(item[prop]);
+      // }
     }
     return searchedArray;
   };
